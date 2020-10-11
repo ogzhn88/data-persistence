@@ -2,10 +2,11 @@ package com.udacity.jdnd.course3.critter.model;
 
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
-public class Customer {
+public class Customer implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -31,16 +32,6 @@ public class Customer {
         this.pets = pets;
     }
 
-    @Override
-    public String toString() {
-        return "Customer{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", notes='" + notes + '\'' +
-                ", pets=" + pets +
-                '}';
-    }
 
     public long getId() {
         return id;

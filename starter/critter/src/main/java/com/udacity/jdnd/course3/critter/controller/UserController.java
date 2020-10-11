@@ -3,9 +3,11 @@ package com.udacity.jdnd.course3.critter.controller;
 import com.udacity.jdnd.course3.critter.dto.*;
 import com.udacity.jdnd.course3.critter.model.Customer;
 import com.udacity.jdnd.course3.critter.model.Employee;
+import com.udacity.jdnd.course3.critter.model.Pet;
 import com.udacity.jdnd.course3.critter.model.Schedule;
 import com.udacity.jdnd.course3.critter.service.CustomerService;
 import com.udacity.jdnd.course3.critter.service.EmployeeService;
+import com.udacity.jdnd.course3.critter.service.PetService;
 import org.hibernate.dialect.CUBRIDDialect;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
@@ -33,32 +35,37 @@ public class UserController {
     private CustomerService customerService;
     @Autowired
     private EmployeeService employeeService;
+    @Autowired
+    private PetService petService;
 
     @PostMapping("/customer")
     public CustomerDTO saveCustomer(@RequestBody CustomerDTO customerDTO) {
-
-        customerService.saveCustomer(modelMapper.map(customerDTO,Customer.class));
-        return customerDTO;
+        Customer customer = new Customer();
+        BeanUtils.copyProperties(customerDTO, customer);
+        customerService.saveCustomer(customer);
+        return convertCustomerToCustomerDTO(customer);
     }
+
+
 
     @GetMapping("/customer")
     public List<CustomerDTO> getAllCustomers(){
 
-        List<Customer> customers = customerService.getAllCustomers();
-        List<CustomerDTO> customerDtos = Arrays.asList(modelMapper.map(customers, CustomerDTO[].class));
+        List<CustomerDTO> customerDtos = convertCustomersToCustomerDTOs(customerService.getAllCustomers());
         return customerDtos;
     }
 
     @GetMapping("/customer/pet/{petId}")
     public CustomerDTO getOwnerByPet(@PathVariable long petId){
 
-        return modelMapper.map(customerService.getCustomerByPet(petId), CustomerDTO.class);
+        return convertCustomerToCustomerDTO(petService.getPet(petId).getOwner());
     }
 
     @PostMapping("/employee")
     public EmployeeDTO saveEmployee(@RequestBody EmployeeDTO employeeDTO) {
-        employeeService.saveEmployee(modelMapper.map(employeeDTO,Employee.class));
-        return employeeDTO;
+        Employee e = modelMapper.map(employeeDTO,Employee.class);
+        employeeService.saveEmployee(e);
+        return modelMapper.map(e,EmployeeDTO.class);
     }
 
     @PostMapping("/employee/{employeeId}")
@@ -84,11 +91,32 @@ public class UserController {
         return availableEmployeeDtos;
     }
 
-    private static EmployeeDTO convertEmployeeToEmployeeDTO(Employee employee)
+    private static CustomerDTO convertCustomerToCustomerDTO(Customer customer)
     {
-        EmployeeDTO employeeDTO = new EmployeeDTO();
-        BeanUtils.copyProperties(employee, employeeDTO);
-        return employeeDTO;
+        CustomerDTO customerDTO = new CustomerDTO();
+        BeanUtils.copyProperties(customer, customerDTO);
+        if(customer.getPets() != null)
+        {
+            customerDTO.setPetIds(new ArrayList<>());
+            for(Pet p : customer.getPets())
+                customerDTO.getPetIds().add(p.getId());
+        }
+
+        return customerDTO;
+    }
+
+    private static List<CustomerDTO> convertCustomersToCustomerDTOs(List<Customer> customers)
+    {
+        List<CustomerDTO> customerDTOs = new ArrayList<>();
+        CustomerDTO customerDTO;
+        for(Customer c : customers)
+        {
+            customerDTO = convertCustomerToCustomerDTO(c);
+
+            customerDTOs.add(customerDTO);
+        }
+
+        return customerDTOs;
     }
 
 }

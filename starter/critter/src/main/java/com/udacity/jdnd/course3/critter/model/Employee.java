@@ -3,13 +3,14 @@ package com.udacity.jdnd.course3.critter.model;
 import com.udacity.jdnd.course3.critter.enums.EmployeeSkill;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name = "employee")
-public class Employee {
+public class Employee implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

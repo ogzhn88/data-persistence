@@ -76,8 +76,13 @@ public class PetServiceImpl implements PetService {
     public List<Pet> getPetsByOwnerId(long ownerId) {
 
         Customer c = customerService.getCustomer(ownerId);
-        List<Pet> pets = c.getPets();
+//        System.out.println("bbbbbb"+c.toString());
+//        List<Pet> pets = c.getPets();
+        //        return  pets;
 
-        return  pets;
+        List<Pet> pets =petRepository.findByOwner(c);
+        return pets;
+
+
     }
 }

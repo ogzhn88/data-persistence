@@ -25,8 +25,9 @@ public class ScheduleController {
     @PostMapping
     public ScheduleDTO createSchedule(@RequestBody ScheduleDTO scheduleDTO) {
           try {
-              scheduleService.saveSchedule(modelMapper.map(scheduleDTO, Schedule.class));
-              return scheduleDTO;
+              Schedule s = modelMapper.map(scheduleDTO, Schedule.class);
+              scheduleService.saveSchedule(s);
+              return modelMapper.map(s, ScheduleDTO.class);
           }catch (Exception e){
               e.printStackTrace();
               throw new UnsupportedOperationException();

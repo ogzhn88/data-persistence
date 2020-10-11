@@ -20,7 +20,7 @@ public class Pet implements Serializable {
 
     private String name;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "owner_id")
     private Customer owner;
 
@@ -40,17 +40,6 @@ public class Pet implements Serializable {
         this.notes = notes;
     }
 
-    @Override
-    public String toString() {
-        return "Pet{" +
-                "id=" + id +
-                ", type='" + type + '\'' +
-                ", name='" + name + '\'' +
-                ", owner=" + owner +
-                ", birthDate=" + birthDate +
-                ", notes='" + notes + '\'' +
-                '}';
-    }
 
     public long getId() {
         return id;
