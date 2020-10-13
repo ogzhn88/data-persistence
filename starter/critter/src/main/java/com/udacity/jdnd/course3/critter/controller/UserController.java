@@ -75,11 +75,16 @@ public class UserController {
     }
 
     @PutMapping("/employee/{employeeId}")
-    public void setAvailability(@RequestBody Set<DayOfWeek> daysAvailable, @PathVariable long employeeId) {
-        Employee e = employeeService.getEmployee(employeeId);
-        List<DayOfWeek> daysAvailableList = new ArrayList<DayOfWeek>(daysAvailable);
-        e.setDaysAvailable(daysAvailableList);
-        employeeService.saveEmployee(e);
+    public String setAvailability(@RequestBody Set<DayOfWeek> daysAvailable, @PathVariable long employeeId) {
+        try {
+            Employee e = employeeService.getEmployee(employeeId);
+            List<DayOfWeek> daysAvailableList = new ArrayList<DayOfWeek>(daysAvailable);
+            e.setDaysAvailable(daysAvailableList);
+            employeeService.saveEmployee(e);
+            return "Success";
+        }catch (Exception e){
+            return "An Error Has Been Occured";
+        }
     }
 
     @GetMapping("/employee/availability")

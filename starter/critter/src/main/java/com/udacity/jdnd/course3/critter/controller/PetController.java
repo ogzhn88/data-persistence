@@ -33,10 +33,14 @@ public class PetController {
             Pet pet = new Pet();
             BeanUtils.copyProperties(petDTO, pet);
             Customer owner = customerService.getCustomer(petDTO.getOwnerId());
-            pet.setOwner(owner);
-            if(owner.getPets() == null)
-                owner.setPets(new ArrayList<>());
-            owner.getPets().add(pet);
+            if(owner != null){
+                pet.setOwner(owner);
+                if(owner.getPets() == null)
+                    owner.setPets(new ArrayList<>());
+                owner.getPets().add(pet);
+            }
+
+
             petService.savePet(pet);
             return convertPetToPetDTO(pet);
 
@@ -78,7 +82,6 @@ public class PetController {
     public List<PetDTO> getPetsByOwner(@PathVariable long ownerId) {
         try {
             List<Pet> myPets = petService.getPetsByOwnerId(ownerId);
-            System.out.println(myPets+"AAAAAAAAAA");
             List<PetDTO> petDTOList = Arrays.asList(modelMapper.map(myPets, PetDTO[].class));
 
             return petDTOList;
